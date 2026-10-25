@@ -1,6 +1,6 @@
 # 消消乐（xiaoxiaole-pwa）初始开发 交接
 
-- last_updated: 2026-10-26 00:25
+- last_updated: 2026-10-26 00:40
 - status: active
 - version: v0.1.0
 
@@ -10,7 +10,7 @@ DaoBox 家族第 8 个子应用：纯娱乐休闲「消消乐」水果三消小�
 
 ## 当前状态
 
-应用代码完成，正在部署国内站（DNS + HTTPS + E2E）。
+✅ 国内站已上线：DNS + HTTPS + 线上 E2E 全部通过（https://xiaoxiaole.daobox.net.cn）。首页娱乐区入口待加（跨项目）。
 
 ## 最近完成
 
@@ -20,12 +20,15 @@ DaoBox 家族第 8 个子应用：纯娱乐休闲「消消乐」水果三消小�
 - PWA：manifest + SW（dbxxl-v1）+ 全套图标（PIL 生成，绿底三水果圆）
 - worker：纯静态 ASSETS 托管 + wrangler.toml（xiaoxiaole.daobox.app 备用，未部署）
 - 服务器端：server/node-server.mjs 端口 8796（suan 8788/shici 8790/cymys 8791/aoshu 8792/sudoku 8793/gomoku 8794/2048 8795 之后）
+- 部署完成：rsync → /opt/xiaoxiaole-pwa、systemd xiaoxiaole-pwa（enabled/active）、Caddy xiaoxiaole.daobox.net.cn → 8796、HTTPS 证书签发成功
+- DNS：A 记录 xiaoxiaole → 47.108.83.209（阿里云控制台浏览器操作，用户配合短信验证码登录）
+- 线上 E2E 实测：全资源 200、portal.js 游客胶囊（剩 14 分）、真实点击消除 +30 分（3×10×1）、无效交换自动换回、撤销回退（分数归 0 最高分保留）、localStorage 保存/恢复、游客 /api/me 401 属正常
 
 ## 待办
 
-- [ ] 国内部署：rsync 至 /opt/xiaoxiaole-pwa + systemd（端口 8796）+ Caddy
-- [ ] DNS：A 记录 xiaoxiaole → 47.108.83.209（阿里云控制台，可能需用户短信验证码）
-- [ ] 线上 E2E：https://xiaoxiaole.daobox.net.cn 200 + portal.js 正常
+- [x] 国内部署：rsync 至 /opt/xiaoxiaole-pwa + systemd（端口 8796）+ Caddy（2026-10-26 00:24）
+- [x] DNS：A 记录 xiaoxiaole → 47.108.83.209（2026-10-26 00:28）
+- [x] 线上 E2E：https://xiaoxiaole.daobox.net.cn 全资源 200 + portal.js 正常 + 真实消除/撤销实测（2026-10-26 00:32）
 - [ ] 手机实测：点选/拖动交换、连锁动画、撤销、洗牌、加主屏幕、离线
 - [ ] daobox-home 首页娱乐区加「消消乐」入口（跨项目，先告知用户）
 - [ ] 海外部署（暂缓）：xiaoxiaole.daobox.app
@@ -44,6 +47,8 @@ DaoBox 家族第 8 个子应用：纯娱乐休闲「消消乐」水果三消小�
 - SW 缓存键 dbxxl-v1；改前端资源记得同步升 style/app 的 ?v= 和 SW CACHE
 - undo 快照只在「交换成功产生消除」时记录，失败交换不留快照
 - 洗牌用 newBoard() 全盘重生成（保证无初始匹配且有解），不保留原水果数量
+
+- 仓库：https://github.com/hinewly/xiaoxiaole-pwa（public，初始 commit 091494e）
 
 ## 相关文件
 
