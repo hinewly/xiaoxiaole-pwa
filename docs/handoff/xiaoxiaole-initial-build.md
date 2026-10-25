@@ -1,6 +1,6 @@
 # 消消乐（xiaoxiaole-pwa）初始开发 交接
 
-- last_updated: 2026-10-26 00:40
+- last_updated: 2026-10-26 00:45
 - status: active
 - version: v0.1.0
 
@@ -10,7 +10,7 @@ DaoBox 家族第 8 个子应用：纯娱乐休闲「消消乐」水果三消小�
 
 ## 当前状态
 
-✅ 国内站已上线：DNS + HTTPS + 线上 E2E 全部通过（https://xiaoxiaole.daobox.net.cn）。首页娱乐区入口待加（跨项目）。
+✅ 国内站已上线 + 首页入口已接通：DNS + HTTPS + E2E 全部通过，daobox-home 首页娱乐区「消消乐」卡片上线（v1.4.7-audit，net.cn 自动指向国内域，实测跳转 OK）。
 
 ## 最近完成
 
@@ -29,8 +29,9 @@ DaoBox 家族第 8 个子应用：纯娱乐休闲「消消乐」水果三消小�
 - [x] 国内部署：rsync 至 /opt/xiaoxiaole-pwa + systemd（端口 8796）+ Caddy（2026-10-26 00:24）
 - [x] DNS：A 记录 xiaoxiaole → 47.108.83.209（2026-10-26 00:28）
 - [x] 线上 E2E：https://xiaoxiaole.daobox.net.cn 全资源 200 + portal.js 正常 + 真实消除/撤销实测（2026-10-26 00:32）
+- [x] daobox-home 首页入口上线（v1.4.7-audit，仅 rsync public 避开其他任务未提交的 worker 改动，commit 4a2559f）
 - [ ] 手机实测：点选/拖动交换、连锁动画、撤销、洗牌、加主屏幕、离线
-- [ ] daobox-home 首页娱乐区加「消消乐」入口（跨项目，先告知用户）
+- [x] daobox-home 首页娱乐区加「消消乐」入口（2026-10-26 用户确认后执行，commit 4a2559f，已部署实测）
 - [ ] 海外部署（暂缓）：xiaoxiaole.daobox.app
 
 ## 重要决策
