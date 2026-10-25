@@ -1,0 +1,181 @@
+/* 消消乐 · DaoBox 家族（v0.1.0） */
+:root {
+  --bg: #f0faf1;
+  --board: #d9efdc;
+  --cell: #ffffff;
+  --text: #234031;
+  --muted: #7c8f84;
+  --accent: #ff6b6b;
+  --green: #22c55e;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  min-height: 100vh; min-height: 100dvh;
+  display: flex; flex-direction: column;
+  background: var(--bg); color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- 顶栏 ---------- */
+.topbar { background: #fff; border-bottom: 1px solid rgba(0,0,0,.06); }
+.topbar-inner {
+  max-width: 560px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px;
+}
+.brand { font-size: 17px; font-weight: 700; }
+.topbar-tools { display: inline-flex; align-items: center; gap: 6px; }
+.version-badge { font-size: 11px; color: #6b7280; background: #f3f4f6; border-radius: 999px; padding: 3px 7px; }
+.refresh-btn { width: 26px; height: 26px; padding: 0; border: 1px solid #e5e7eb; border-radius: 999px; background: #fff; color: #6b7280; font-size: 15px; line-height: 1; cursor: pointer; }
+.refresh-btn:hover { color: var(--green); border-color: #86efac; }
+
+/* ---------- 主体 ---------- */
+.page { max-width: 560px; width: 100%; margin: 0 auto; padding: 16px 16px 32px; flex: 1; }
+
+.hud { display: flex; gap: 10px; align-items: stretch; margin-bottom: 12px; }
+.score-box { flex: 1; background: var(--board); border-radius: 10px; padding: 8px 12px; text-align: center; }
+.score-label { font-size: 12px; color: var(--muted); }
+.score-value { font-size: 24px; font-weight: 800; line-height: 1.2; }
+.btn-col { display: flex; flex-direction: column; gap: 6px; justify-content: center; }
+.btn {
+  border: none; border-radius: 8px;
+  padding: 8px 14px; font-size: 14px; font-weight: 700;
+  background: #cfe9d4; color: #2f6b44; cursor: pointer;
+}
+.btn.primary { background: var(--green); color: #fff; }
+.btn:disabled { opacity: .45; cursor: default; }
+
+.hint { font-size: 13px; margin-bottom: 14px; text-align: center; color: var(--muted); }
+.hint b { color: var(--accent); }
+
+/* ---------- 棋盘 ---------- */
+.board {
+  width: 100%;
+  background: var(--board);
+  border-radius: 14px;
+  padding: 8px;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.cells {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 4px;
+}
+.cell {
+  aspect-ratio: 1;
+  background: var(--cell);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(18px, 5.4vw, 30px);
+  line-height: 1;
+  cursor: pointer;
+  position: relative;
+}
+.cell.selected { outline: 3px solid var(--accent); outline-offset: -3px; transform: scale(.9); }
+.cell.swap-bump { animation: bump .16s ease; }
+.cell.shake { animation: shake .3s ease; }
+.cell.clearing { animation: pop-out .26s ease forwards; pointer-events: none; }
+.cell.drop-in { animation: drop-in .22s ease backwards; }
+
+@keyframes bump {
+  0% { transform: scale(1); }
+  50% { transform: scale(.82); }
+  100% { transform: scale(1); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+@keyframes pop-out {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(.1); opacity: 0; }
+}
+@keyframes drop-in {
+  0% { transform: translateY(-14px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* ---------- 得分飘字 ---------- */
+.float-layer {
+  position: relative; height: 0; overflow: visible;
+  max-width: 560px; margin: 0 auto; pointer-events: none; text-align: center;
+}
+.float-text {
+  position: absolute; left: 50%; top: -8px;
+  transform: translateX(-50%);
+  font-size: 20px; font-weight: 800; color: var(--accent);
+  text-shadow: 0 1px 4px rgba(255,107,107,.3);
+  animation: float-up 1s ease forwards;
+  white-space: nowrap;
+}
+@keyframes float-up {
+  0% { opacity: 0; transform: translate(-50%, 8px); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -34px); }
+}
+
+/* ---------- 提示 toast ---------- */
+.toast {
+  position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%);
+  background: rgba(23,42,33,.88); color: #fff;
+  font-size: 13px; padding: 9px 16px; border-radius: 999px;
+  z-index: 900; pointer-events: none;
+  animation: toast-in .25s ease;
+}
+.toast.hidden { display: none; }
+@keyframes toast-in {
+  0% { opacity: 0; transform: translate(-50%, 8px); }
+  100% { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* ---------- 说明 ---------- */
+.tips {
+  margin-top: 22px; background: #fff; border-radius: 12px;
+  padding: 16px; border: 1px solid rgba(0,0,0,.05);
+}
+.tips h2 { font-size: 15px; margin-bottom: 8px; }
+.tips ul { padding-left: 18px; }
+.tips li { font-size: 13px; line-height: 1.8; color: #4b5f54; }
+
+/* ---------- 弹窗 ---------- */
+.modal-mask {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(2,6,23,.6);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.modal-mask.hidden { display: none; }
+.modal-card {
+  width: 100%; max-width: 340px; background: #fff; border-radius: 16px;
+  padding: 26px 22px; text-align: center;
+}
+.modal-card .win-emoji { font-size: 42px; line-height: 1; }
+.modal-card h3 { font-size: 19px; margin: 12px 0 6px; color: #111827; }
+.modal-card p { font-size: 14px; color: #6b7280; line-height: 1.6; }
+.modal-btns { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+.primary-btn, .secondary-btn {
+  display: block; width: 100%; padding: 11px 0; border-radius: 10px;
+  font-size: 15px; font-weight: 700; text-decoration: none; text-align: center;
+  border: none; cursor: pointer;
+}
+.primary-btn { background: var(--green); color: #fff; }
+.secondary-btn { background: #f3f4f6; color: #374151; }
+
+/* ---------- 底部 ---------- */
+.footer {
+  max-width: 560px; width: 100%; margin: 0 auto;
+  padding: 16px; text-align: center; font-size: 13px; color: #9ca3af;
+}
+.footer a { color: #9ca3af; text-decoration: none; }
+.footer .dot { margin: 0 6px; }
+
+@media (max-width: 380px) {
+  .score-value { font-size: 20px; }
+  .btn { padding: 7px 10px; font-size: 13px; }
+}

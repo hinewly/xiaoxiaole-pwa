@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <script>
+    // 双域名适配：国内站 daobox.net.cn / 海外站 daobox.app，门户与登录按当前域名自动选择
+    window.DB_HOME = location.hostname.indexOf('daobox.net.cn') !== -1
+      ? 'https://daobox.net.cn' : 'https://daobox.app';
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>消消乐 · DaoBox 休闲小游戏</title>
+  <meta name="description" content="DaoBox 消消乐：交换相邻水果，凑齐 3 个即可消除，连锁消除得分翻倍！点选、拖动都支持，随时随地来一局。">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="theme-color" content="#22c55e">
+  <link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">🍉 消消乐</div>
+      <div class="topbar-tools"><span class="version-badge" id="app-version">v0.1.0</span><button class="refresh-btn" id="refresh-btn" type="button" title="强制刷新 · 清缓存重载" aria-label="强制刷新">↻</button></div>
+      <div class="topbar-slot" id="db-account-slot"></div>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hud">
+      <div class="score-box">
+        <div class="score-label">当前分数</div>
+        <div class="score-value" id="score">0</div>
+      </div>
+      <div class="score-box">
+        <div class="score-label">最高分</div>
+        <div class="score-value" id="best">0</div>
+      </div>
+      <div class="btn-col">
+        <button id="btn-new" class="btn primary" type="button">新游戏</button>
+        <button id="btn-undo" class="btn" type="button" disabled>撤销</button>
+      </div>
+    </section>
+
+    <p class="hint">点选两个相邻水果交换位置，凑齐 <b>3 个</b>同类即可消除！</p>
+
+    <div id="board" class="board" aria-label="消消乐棋盘">
+      <div class="cells" id="cells"></div>
+    </div>
+    <div id="float-layer" class="float-layer"></div>
+
+    <section class="tips">
+      <h2>玩法说明</h2>
+      <ul>
+        <li>点选两个相邻的水果交换位置（也支持直接拖动），交换后凑齐 3 个及以上同类水果即可消除得分。</li>
+        <li>若交换后没有消除，会自动换回原位，不扣分。</li>
+        <li>消除后上方水果下落补位，连锁消除（Combo）分数成倍增加。</li>
+        <li>棋盘上没有可消除的组合时会自动洗牌，游戏继续。</li>
+        <li>进度自动保存在本机，关掉页面下次接着玩。</li>
+      </ul>
+    </section>
+  </main>
+
+  <div id="time-lock" class="modal-mask hidden">
+    <div class="modal-card">
+      <div class="win-emoji">⏰</div>
+      <h3>今日免费时长已用完</h3>
+      <p>注册登录每天可获得更多时长。</p>
+      <div class="modal-btns">
+        <a id="lock-login" class="primary-btn" href="javascript:void(0)">注册 / 登录</a>
+        <button id="lock-close" class="secondary-btn" type="button">知道了</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <a id="home-link" href="javascript:void(0)">← 返回 DaoBox 工具箱</a>
+    <span class="dot">·</span>
+    <span id="contact-email"></span>
+  </footer>
+
+  <script>
+    // 联系邮箱运行时拼接（防 Cloudflare obfuscate）
+    (function () {
+      var u = 'hinewly', d = '163.com';
+      document.getElementById('contact-email').innerHTML =
+        '<a href="mailto:' + u + '@' + d + '">' + u + '@' + d + '</a>';
+    })();
+  </script>
+  <script src="app.js?v=1"></script>
+  <script>document.write('<script src="' + window.DB_HOME + '/portal.js" data-app="xiaoxiaole"><\/script>');</script>
+  <script>
+    (function () {
+      var login = document.getElementById('lock-login');
+      if (login) login.href = window.DB_HOME + '/login?src=xiaoxiaole';
+      var home = document.getElementById('home-link');
+      if (home) home.href = window.DB_HOME + '?src=xiaoxiaole';
+    })();
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('./service-worker.js').catch(function () {});
+      });
+    }
+  </script>
+</body>
+</html>
