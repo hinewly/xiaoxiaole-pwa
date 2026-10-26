@@ -1,7 +1,7 @@
 /* 消消乐 · DaoBox 家族（v0.1.0） */
 "use strict";
 
-var APP_VERSION = "v0.1.0";
+var APP_VERSION = "v0.1.1";
 var SIZE = 8;
 var TYPES = 6;
 var FRUITS = ["🍉", "🍓", "🍇", "🍋", "🍑", "🍒"];
