@@ -9,4 +9,4 @@ routes = [
 [assets]
 directory = "../public"
 binding = "ASSETS"
-run_worker_first = ["/api/*"]
+run_worker_first = ["/api/*", "/"]  # 2026-11-13 海外英文化：根路径进 worker 内部改写

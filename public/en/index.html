@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Fruit Match Online — Free Match-3 Puzzle for Kids | DaoBox Studio</title>
+  <meta name="description" content="Play Fruit Match — a cute, kid-friendly match-3 puzzle with fruits. Free online, no download, no signup. Swap, pop, combo!">
+  <meta name="keywords" content="fruit match, match 3 for kids, free match 3 game, kids puzzle online">
+<link rel="manifest" href="/en/manifest.json">
+  <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <meta name="theme-color" content="#22c55e">
+  <link rel="stylesheet" href="/en/style.css?v=3">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">🍉 Fruit Match</div>
+      <div class="topbar-tools"><span class="version-badge">Fruit Match</span></div>
+      <div class="topbar-slot" id="db-account-slot"></div>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hud">
+      <div class="score-box">
+        <div class="score-label">Score</div>
+        <div class="score-value" id="score">0</div>
+      </div>
+      <div class="score-box">
+        <div class="score-label">Best</div>
+        <div class="score-value" id="best">0</div>
+      </div>
+      <div class="btn-col">
+        <button id="btn-new" class="btn primary" type="button">New game</button>
+        <button id="btn-undo" class="btn" type="button" disabled>Undo</button>
+      </div>
+    </section>
+
+    <p class="hint">Swap two neighboring fruits — line up <b>3 or more</b> of the same to pop them!</p>
+
+    <div id="board" class="board" aria-label="Fruit Match board">
+      <div class="cells" id="cells"></div>
+    </div>
+    <div id="float-layer" class="float-layer"></div>
+
+    <section class="tips">
+      <h2>How to play</h2>
+      <ul>
+        <li>Tap two neighboring fruits to swap them (dragging works too). Line up 3 or more of the same fruit to pop them and score.</li>
+        <li>If a swap makes no match, the fruits swap back — no penalty.</li>
+        <li>After a pop, fruits fall down to fill gaps — chain combos (Combo) multiply your score.</li>
+        <li>If no matches are possible, the board shuffles automatically and the game continues.</li>
+        <li>Your progress is saved on this device automatically.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <a id="home-link" href="https://daobox.app/">← Back to DaoBox Studio</a>
+    <span class="dot">·</span>
+    <span id="contact-email"></span>
+  </footer>
+
+  <script>
+    // Contact email assembled at runtime (avoids Cloudflare email obfuscation)
+    (function () {
+      var u = 'support', d = 'daobox.app';
+      document.getElementById('contact-email').innerHTML =
+        '<a href="mailto:' + u + '@' + d + '">' + u + '@' + d + '</a>';
+    })();
+  </script>
+  <script src="/en/app.js?v=4"></script>
+
+
+</body>
+</html>
