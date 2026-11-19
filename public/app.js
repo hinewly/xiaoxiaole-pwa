@@ -1,7 +1,7 @@
 /* 消消乐 · DaoBox 家族（v0.1.0） */
 "use strict";
 
-var APP_VERSION = "v0.1.3";
+var APP_VERSION = "v0.1.4";
 var SIZE = 8;
 var TYPES = 6;
 var FRUITS = ["🍉", "🍓", "🍇", "🍋", "🍑", "🍒"];
@@ -359,8 +359,8 @@ function boot() {
     if ("caches" in window) {
       caches.keys().then(function (keys) {
         return Promise.all(keys.map(function (k) { return caches.delete(k); }));
-      }).finally(function () { location.reload(); });
-    } else { location.reload(); }
+      }).finally(function () { location.replace(location.pathname + (location.search ? location.search + "&" : "?") + "_t=" + Date.now()); });
+    } else { location.replace(location.pathname + (location.search ? location.search + "&" : "?") + "_t=" + Date.now()); }
   });
 
   if (!loadGame()) {
