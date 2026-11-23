@@ -4,7 +4,7 @@ DaoBox 家族第 8 个子应用，纯**娱乐休闲**三消小游戏（水果主
 
 - 国内站：https://xiaoxiaole.daobox.net.cn
 - 海外站：xiaoxiaole.daobox.app（worker 配置已备好，暂缓部署）
-- 统一账号 / 时长体系：portal.js（游客 30 分钟/天、注册 60 分钟/天）
+- 统一账号 / 时长体系：portal.js（游客 10 分钟/天、注册免费用户 20 分钟/天，会员不限时）
 
 ## 玩法
 
