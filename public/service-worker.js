@@ -1,5 +1,5 @@
 /* 消消乐 SW v1：静态资源缓存 */
-const CACHE = "dbxxl-v9";
+const CACHE = "dbxxl-v10";
 const ASSETS = [
   "./", "./index.html", "./style.css?v=1", "./app.js?v=0.1.6",
   "./manifest.json", "./icons/favicon.svg",
