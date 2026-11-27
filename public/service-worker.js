@@ -1,7 +1,7 @@
 /* 消消乐 SW v1：静态资源缓存 */
-const CACHE = "dbxxl-v10";
+const CACHE = "dbxxl-v11";
 const ASSETS = [
-  "./", "./index.html", "./style.css?v=1", "./app.js?v=0.1.6",
+  "./", "./index.html", "./style.css?v=1", "./app.js?v=0.1.8",
   "./manifest.json", "./icons/favicon.svg",
   "./icons/icon-48.png", "./icons/icon-64.png", "./icons/icon-192.png", "./icons/icon-512.png"
 ];

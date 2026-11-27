@@ -1,7 +1,7 @@
 /* 消消乐 · DaoBox 家族（v0.1.0） */
 "use strict";
 
-var APP_VERSION = "v0.1.7";
+var APP_VERSION = "v0.1.8";
 var SIZE = 8;
 var TYPES = 6;
 var FRUITS = ["🍉", "🍓", "🍇", "🍋", "🍑", "🍒"];
@@ -14,38 +14,102 @@ var selected = null;   // {r, c}
 var busy = false;      // 动画/结算中，禁止输入
 var locked = false;    // 时长超时锁定
 var undoState = null;  // {board, score} 上一次成功交换前快照
+var activeAt = 0;
+var sync = null;
 
 function $(id) { return document.getElementById(id); }
 function sleep(ms) { return new Promise(function (res) { setTimeout(res, ms); }); }
 function idx(r, c) { return r * SIZE + c; }
 
 /* ---------- 存档 ---------- */
-function saveGame() {
+function collectState() {
+  return {
+    records: { best: Math.max(0, parseInt(best, 10) || 0) },
+    active: board.length ? { board: board, score: score, updatedAt: activeAt } : null
+  };
+}
+
+function readLegacyState() {
   try {
-    localStorage.setItem(STORE_KEY, JSON.stringify({
-      board: board, score: score, best: best
-    }));
-  } catch (err) {}
+    var d = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
+    if (!d || !Array.isArray(d.board) || d.board.length !== SIZE) return null;
+    return {
+      records: { best: Math.max(0, parseInt(d.best, 10) || 0) },
+      active: { board: d.board, score: d.score || 0, updatedAt: 0 }
+    };
+  } catch (err) { return null; }
+}
+
+function mergeState(local, remote) {
+  local = local || {};
+  remote = remote || {};
+  var lb = Number(local.records && local.records.best) || 0;
+  var rb = Number(remote.records && remote.records.best) || 0;
+  var la = local.active;
+  var ra = remote.active;
+  var active = null;
+  if (la && ra) active = (Number(la.updatedAt) || 0) > (Number(ra.updatedAt) || 0) ? la : ra;
+  else active = la || ra || null;
+  return { records: { best: Math.max(lb, rb) }, active: active };
+}
+
+function applyState(d) {
+  d = d || {};
+  best = Math.max(Number(d.records && d.records.best) || 0, Number(d.active && d.active.score) || 0);
+  var b = d.active && d.active.board;
+  var ok = Array.isArray(b) && b.length === SIZE;
+  if (ok) {
+    for (var r = 0; r < SIZE; r++) {
+      if (!Array.isArray(b[r]) || b[r].length !== SIZE) { ok = false; break; }
+      for (var c = 0; c < SIZE; c++) {
+        if (!Number.isInteger(b[r][c]) || b[r][c] < 0 || b[r][c] >= TYPES) { ok = false; break; }
+      }
+      if (!ok) break;
+    }
+  }
+  if (ok) {
+    board = b.map(function (row) { return row.slice(); });
+    score = Number(d.active.score) || 0;
+    activeAt = Number(d.active.updatedAt) || 0;
+  } else {
+    board = newBoard();
+    score = 0;
+    activeAt = 0;
+  }
+  renderCells();
+  updateHud();
+}
+
+function initSync() {
+  if (sync || !window.DaoBoxCloud) return;
+  sync = window.DaoBoxCloud.create({
+    app: "xiaoxiaole",
+    schemaVersion: 1,
+    readLegacy: readLegacyState,
+    collect: collectState,
+    apply: applyState,
+    merge: mergeState,
+    isEmpty: function (d) {
+      return !d || (!(Number(d.records && d.records.best) > 0) &&
+        !(d.active && Number(d.active.updatedAt) > 0));
+    }
+  });
+}
+
+function saveGame() {
+  activeAt = Date.now();
+  if (sync) sync.save(collectState());
+  else {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify({ board: board, score: score, best: best })); } catch (err) {}
+  }
 }
 
 function loadGame() {
-  try {
-    var raw = localStorage.getItem(STORE_KEY);
-    if (!raw) return false;
-    var d = JSON.parse(raw);
-    if (!d || !Array.isArray(d.board) || d.board.length !== SIZE) return false;
-    for (var r = 0; r < SIZE; r++) {
-      if (!Array.isArray(d.board[r]) || d.board[r].length !== SIZE) return false;
-      for (var c = 0; c < SIZE; c++) {
-        var v = d.board[r][c];
-        if (!Number.isInteger(v) || v < 0 || v >= TYPES) return false;
-      }
-    }
-    board = d.board.map(function (row) { return row.slice(); });
-    score = d.score || 0;
-    best = Math.max(d.best || 0, score);
-    return true;
-  } catch (err) { return false; }
+  initSync();
+  var d = sync ? sync.read() : readLegacyState();
+  if (!d || (!d.active && !(Number(d.records && d.records.best) > 0))) return false;
+  applyState(d);
+  return true;
 }
 
 /* ---------- 核心逻辑 ---------- */
@@ -276,6 +340,7 @@ function newGame() {
   if (busy) return;
   board = newBoard();
   score = 0;
+  activeAt = Date.now();
   undoState = null;
   selected = null;
   renderCells();
@@ -366,7 +431,10 @@ function boot() {
   if (!loadGame()) {
     board = newBoard();
     score = 0;
-    saveGame();
+    activeAt = 0;
+    initSync();
+    if (sync) sync.prime(collectState());
+    else saveGame();
   }
   renderCells();
   updateHud();
@@ -375,10 +443,11 @@ function boot() {
   $("btn-new").addEventListener("click", newGame);
   $("btn-undo").addEventListener("click", doUndo);
   $("lock-close").addEventListener("click", function () { $("time-lock").classList.add("hidden"); });
+  if (sync) sync.start();
 }
 document.addEventListener("DOMContentLoaded", boot);
 
 // 页面隐藏时保存
 document.addEventListener("visibilitychange", function () {
-  if (document.visibilityState === "hidden") saveGame();
+  if (document.visibilityState === "hidden" && sync) sync.flush(true);
 });
